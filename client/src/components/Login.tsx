@@ -7,7 +7,7 @@ export const Login = () => {
   const [accessToken] = useLocalStorage('access_token');
 
   const authUrl = `https://accounts.spotify.com/authorize\
-?client_id=aff39ac9de5440a4bed8b34bc45ce4f1\
+?client_id=d356f935b2054dd99f85b27fbde83ad0\
 &response_type=code\
 &redirect_uri=http://localhost:3000/auth\
 &scope=user-library-read`;
