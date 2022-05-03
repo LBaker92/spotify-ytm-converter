@@ -1,50 +1,40 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react'
+import axios from "axios";
+import { useLocalStorage } from "./useLocalStorage";
 
-export default function useSpotifyAuth(code: string) {
-  const [accessToken, setAccessToken] = useState('');
-  const [refreshToken, setRefreshToken] = useState('');
-  const [expiresIn, setExpiresIn] = useState(0);
+export const useSpotifyAuth = () => {
+  const [accessToken, setAccessToken] = useLocalStorage('access_token');
+  
 
-  function getSpotifyToken(): void {
+  const createAccessToken = (code: string): void => {
+    if (accessToken) return; // Don't try to get a token if we have one already.
+
+    axios.interceptors.response.use()
     axios.post('http://localhost:5000/api/authorize', {
       code
+    }, {
+      withCredentials: true,
     })
     .then(response => {
       setAccessToken(response.data.accessToken);
-      setRefreshToken(response.data.refreshToken);
-      setExpiresIn(response.data.expiresIn);
-
-      window.history.pushState({}, '', '/');
     })
-    .catch(err => {
+    .catch(error => {
       // TO-DO: Handle error.
     });
   }
 
-  function checkRefreshToken(): undefined | (() => void) {
-    if (!refreshToken || !expiresIn) return;
-
-    const interval = setInterval(() => getRefreshToken(), (expiresIn - 60) * 1000);
-
-    return () => clearInterval(interval);
-  }
-
-  function getRefreshToken() {
-    axios.post('http://localhost:5000/api/refresh', {
-      refreshToken
-    })
+  const refreshAccessToken = (): void => {
+    axios.post('http://localhost:5000/api/refresh', {}, { withCredentials: true })
     .then(response => {
       setAccessToken(response.data.accessToken);
-      setExpiresIn(response.data.expiresIn);
     })
-    .catch(err => {
+    .catch(error => {
       // TO-DO: Handle error.
-    })
+    });
   }
 
-  useEffect(() => getSpotifyToken(), [code]);
-  useEffect(() => checkRefreshToken(), [refreshToken, expiresIn]);
-
-  return accessToken;
+  return {
+    accessToken,
+    createAccessToken,
+    refreshAccessToken
+  };
 }

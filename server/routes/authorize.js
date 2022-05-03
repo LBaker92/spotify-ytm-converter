@@ -1,23 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const SpotifyWebApi = require('spotify-web-api-node');
-
-const spotifyApi = new SpotifyWebApi({
-  clientId: 'aff39ac9de5440a4bed8b34bc45ce4f1',
-  clientSecret: '5b28fb3e07744b49af3fb8f8f20e98fe',
-  redirectUri: 'http://localhost:3000',
-});
+const spotifyApi = require('../spotify-api-config');
 
 // Route: /api/authorize
 router.post('/', (req, res) => {
   const code = req.body.code;
-
+  
   spotifyApi.authorizationCodeGrant(code)
   .then(response => {
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: 'Strict'
+    };
+
+    res.cookie('refresh_token', response.body.refresh_token, cookieOptions);
+
     res.json({
       accessToken: response.body.access_token,
-      refreshToken: response.body.refresh_token,
-      expiresIn: response.body.expires_in,
+      expiresIn: response.body.expires_in
     });
   })
   .catch(err => {
