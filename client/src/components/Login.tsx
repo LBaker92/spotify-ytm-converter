@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material';
 import { Navigate } from 'react-router-dom';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSpotifyAuthContext } from '../context/SpotifyAuthContext';
 import { SpotifyButton } from '../style';
 
-export const Login = () => {  
-  const [accessToken] = useLocalStorage('access_token');
+export const Login = () => {
+  const spotifyContext = useSpotifyAuthContext();
 
   const authUrl = `https://accounts.spotify.com/authorize\
 ?client_id=d356f935b2054dd99f85b27fbde83ad0\
@@ -13,11 +13,9 @@ export const Login = () => {
 &scope=user-library-read`;
 
   return (<>
-    {accessToken
-    ?
-      <Navigate to='/' replace />
-    :
-      <Box sx={{
+    {spotifyContext.token
+      ? <Navigate to='/' />
+      : <Box sx={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -26,19 +24,19 @@ export const Login = () => {
         gap: '0.5rem'
       }}>
         <Typography variant='h2'
-        align='center'
-        component='h2'>
+          align='center'
+          component='h2'>
           YouTify
         </Typography>
         <Typography variant='subtitle1'
-        align='center'
-        component='p'
-        paragraph>
+          align='center'
+          component='p'
+          paragraph>
           An open source solution for converting Spotify playlists to YouTube Music.
         </Typography>
 
         <SpotifyButton href={authUrl}
-        size='large'>
+          size='large'>
           Login with Spotify
         </SpotifyButton>
       </Box>
