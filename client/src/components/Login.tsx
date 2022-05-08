@@ -7,7 +7,7 @@ export const Login = () => {
   const spotifyContext = useSpotifyAuthContext();
 
   const authUrl = `https://accounts.spotify.com/authorize\
-?client_id=d356f935b2054dd99f85b27fbde83ad0\
+?client_id=aea5dab0bc0545199c6b2da2804bcb3d\
 &response_type=code\
 &redirect_uri=http://localhost:3000/auth\
 &scope=user-library-read`;
