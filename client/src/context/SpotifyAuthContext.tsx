@@ -1,15 +1,15 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState } from 'react'
 
-interface IProps {
+interface Props {
   children: ReactNode;
 }
 
-interface Context {
+interface SpotifyContext {
   token: string;
   setToken: Dispatch<SetStateAction<string>>;
 }
 
-const SpotifyAuthContext = createContext<Context | undefined>(undefined);
+const SpotifyAuthContext = createContext<SpotifyContext | undefined>(undefined);
 
 export const useSpotifyAuthContext = () => {
   const context = useContext(SpotifyAuthContext);
@@ -21,12 +21,14 @@ export const useSpotifyAuthContext = () => {
   return context;
 }
 
-export const SpotifyAuthProvider = ({ children }: IProps) => {
+export const SpotifyAuthProvider = ({ children }: Props) => {
   const [token, setToken] = useState('');
+
   const providerValue = useMemo(() => ({
     token,
     setToken
   }), [token]);
+
   return (
     <SpotifyAuthContext.Provider value={providerValue}>
       {children}

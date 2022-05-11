@@ -1,22 +1,27 @@
-import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSpotifyAuth } from "../hooks/useSpotifyAuth";
 
 export const Authorize = () => {
   const { authorize } = useSpotifyAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const searchParams = new URLSearchParams(window.location.search);
   const code = searchParams.get('code') || '';
 
   useEffect(() => {
+    const authorizeWithSpotify = async () => {
+      try {
+        await authorize(code);
+        navigate('/', { replace: true });
+      } catch (error) {
+        console.log(error);
+        navigate('/login');
+      }
+    }
+
     authorizeWithSpotify();
-  });
+  }, [code, authorize, navigate]);
 
-  const authorizeWithSpotify = async () => {
-    await authorize(code);
-    setIsLoading(false);
-  }
-
-  return isLoading ? <></> : <Navigate to='/' />
+  return <></>;
 };

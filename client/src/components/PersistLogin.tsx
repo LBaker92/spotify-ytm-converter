@@ -9,19 +9,17 @@ export const PersistLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!spotifyContext.token) {
-      refreshAccess()
+    const refreshAccess = async () => {
+      try {
+        await refreshAccessToken();
+      } catch (error) {
+        console.log(error);
+        navigate('/login');
+      }
     }
-  });
 
-  const refreshAccess = async () => {
-    try {
-      await refreshAccessToken();
-    } catch (error) {
-      console.log(error);
-      navigate('/login');
-    }
-  }
+    if (!spotifyContext.token) refreshAccess();
+  }, [spotifyContext.token, refreshAccessToken, navigate]);
 
   return <Outlet />;
 }
