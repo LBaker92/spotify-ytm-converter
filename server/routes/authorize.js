@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const spotifyApi = require('../spotify-api-config');
+const { cookieOptions, spotifyApi } = require('../spotify-api-config');
 
 // Route: /api/authorize
 router.post('/', (req, res) => {
@@ -8,22 +8,26 @@ router.post('/', (req, res) => {
 
   spotifyApi.authorizationCodeGrant(code)
     .then(response => {
-      const cookieOptions = {
-        httpOnly: true,
-        sameSite: 'Strict'
-      };
+      const accessToken = response.body.access_token;
+      const refreshToken = response.body.refresh_token;
+      const expiresIn = response.body.expires_in * 1000 // Convert to milliseconds.
 
-      res.cookie('refresh_token', response.body.refresh_token, cookieOptions);
+      spotifyApi.setAccessToken(accessToken);
+      spotifyApi.setRefreshToken(refreshToken);
 
-      res.json({
-        accessToken: response.body.access_token,
-        expiresIn: response.body.expires_in
+      res.cookie('access_token', accessToken, {
+        ...cookieOptions,
+        maxAge: expiresIn
       });
+
+      res.cookie('refresh_token', refreshToken, cookieOptions);
+
+      res.sendStatus(200);
     })
-    .catch(err => {
-      res.status(400)
-        .json(err.body);
-    });
+    .catch(error => {
+      res.status(error.statusCode)
+        .json(error.body);
+    })
 });
 
 module.exports = router;

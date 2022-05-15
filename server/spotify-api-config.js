@@ -6,4 +6,13 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: 'http://localhost:3000/auth',
 });
 
-module.exports = spotifyApi;
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: 'Strict',
+  overwrite: true
+};
+
+module.exports = {
+  cookieOptions,
+  spotifyApi
+};
