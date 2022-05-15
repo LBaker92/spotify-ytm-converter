@@ -18,8 +18,8 @@ export const Login = () => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: '100vh',
-      gap: '0.5rem'
+      gap: '0.5rem',
+      minHeight: '100%'
     }}>
       <Typography variant='h2'
         align='center'

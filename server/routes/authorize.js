@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { cookieOptions, spotifyApi } = require('../spotify-api-config');
 
-// Route: /api/authorize
-router.post('/', (req, res) => {
+// Route: /api/authorize/login
+router.post('/login', (req, res) => {
   const code = req.body.code;
 
   spotifyApi.authorizationCodeGrant(code)
@@ -29,5 +29,13 @@ router.post('/', (req, res) => {
         .json(error.body);
     })
 });
+
+// Route: /api/authorize/logout
+router.get('/logout', (req, res) => {
+  res.clearCookie('access_token', cookieOptions);
+  res.clearCookie('refresh_token', cookieOptions);
+
+  res.sendStatus(200);
+})
 
 module.exports = router;
