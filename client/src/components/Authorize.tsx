@@ -11,11 +11,13 @@ export const Authorize = () => {
 
   useEffect(() => {
     const authorizeWithSpotify = async () => {
-      await authorize(code);
-
-      localStorage.setItem('isSpotifyAuthenticated', 'true');
-
-      navigate('/', { replace: true });
+      try {
+        await authorize(code);
+        localStorage.setItem('isSpotifyAuthenticated', 'true');
+        navigate('/', { replace: true });
+      } catch (error) {
+        navigate('/login', { replace: true });
+      }
     }
 
     authorizeWithSpotify();

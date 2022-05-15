@@ -21,7 +21,7 @@ export const useHttpClient = () => {
           return httpClient(prevRequest);
         }
 
-        localStorage.setItem('isSpotifyAuthenticated', 'false');
+        localStorage.removeItem('isSpotifyAuthenticated');
         navigate('/login');
 
         return Promise.reject(error);
